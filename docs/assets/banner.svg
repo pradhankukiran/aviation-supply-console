@@ -32,42 +32,41 @@
   <circle cx="1298" cy="154" r="13" fill="#f1a15d"/>
   <g transform="translate(1080 120)">
     <g transform="scale(5.2)">
-      <path
-        fill="#f5f2ea"
-        stroke="#0f1720"
-        stroke-width="1.1"
-        d="M32 5C36 8 38 16 38 24V40L44 49V53L35 48L33 58H31L29 48L20 53V49L26 40V24C26 16 28 8 32 5Z"
-      />
-      <path fill="#f5f2ea" stroke="#0f1720" stroke-width="1.1" d="M26 22 8 27V31L26 30Z"/>
-      <path fill="#f5f2ea" stroke="#0f1720" stroke-width="1.1" d="M38 22 56 27V31L38 30Z"/>
-      <path fill="#f5f2ea" stroke="#0f1720" stroke-width="1.1" d="M26 40 14 46V49L26 46Z"/>
-      <path fill="#f5f2ea" stroke="#0f1720" stroke-width="1.1" d="M38 40 50 46V49L38 46Z"/>
-      <circle cx="32" cy="11" r="2.2" fill="#c9652d"/>
+      <!-- Fuselage -->
+      <path fill="#f5f2ea" stroke="#0f1720" stroke-width="1.1" d="M32 4C35 4 37 10 37 18L37 48C37 53 35 58 32 59 29 58 27 53 27 48L27 18C27 10 29 4 32 4Z"/>
+      <!-- Wings -->
+      <path fill="#f5f2ea" stroke="#0f1720" stroke-width="1.1" d="M27 21L4 31 6 35 27 29Z"/>
+      <path fill="#f5f2ea" stroke="#0f1720" stroke-width="1.1" d="M37 21L60 31 58 35 37 29Z"/>
+      <!-- Tail stabilizers -->
+      <path fill="#f5f2ea" stroke="#0f1720" stroke-width="1.1" d="M28 45L15 50 17 53 28 49Z"/>
+      <path fill="#f5f2ea" stroke="#0f1720" stroke-width="1.1" d="M36 45L49 50 47 53 36 49Z"/>
+      <!-- Cockpit -->
+      <ellipse cx="32" cy="13" rx="2.2" ry="3.5" fill="#c9652d"/>
     </g>
   </g>
   <g transform="translate(88 106)">
     <text x="0" y="0" fill="#c9652d" font-size="28" font-family="Arial, Helvetica, sans-serif" letter-spacing="6">PRIVATE AVIATION SUPPLY INTELLIGENCE</text>
     <text x="0" y="110" fill="#f5f2ea" font-size="90" font-weight="700" font-family="Arial, Helvetica, sans-serif">Aviation Supply</text>
     <text x="0" y="214" fill="#f5f2ea" font-size="90" font-weight="700" font-family="Arial, Helvetica, sans-serif">Console</text>
-    <text x="0" y="292" fill="#bcc9d3" font-size="34" font-family="Arial, Helvetica, sans-serif">FastAPI ops workspace for live OpenSky ingestion, route matching,</text>
-    <text x="0" y="338" fill="#bcc9d3" font-size="34" font-family="Arial, Helvetica, sans-serif">airport supply intelligence, and charter-relevant aircraft state.</text>
+    <text x="0" y="292" fill="#bcc9d3" font-size="26" font-family="Arial, Helvetica, sans-serif">FastAPI ops workspace for live OpenSky ingestion, route matching,</text>
+    <text x="0" y="328" fill="#bcc9d3" font-size="26" font-family="Arial, Helvetica, sans-serif">airport supply intelligence, and charter-relevant aircraft state.</text>
   </g>
   <g transform="translate(88 470)">
     <rect width="308" height="118" fill="url(#glass)" stroke="#617485"/>
     <text x="28" y="42" fill="#c4d0d8" font-size="18" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">LIVE COLLECTOR</text>
     <text x="28" y="86" fill="#f5f2ea" font-size="42" font-weight="700" font-family="Arial, Helvetica, sans-serif">OpenSky</text>
-    <text x="28" y="108" fill="#c4d0d8" font-size="18" font-family="Arial, Helvetica, sans-serif">Anonymous or OAuth2 client credentials</text>
+    <text x="28" y="108" fill="#c4d0d8" font-size="14" font-family="Arial, Helvetica, sans-serif">Anonymous or OAuth2 client credentials</text>
   </g>
   <g transform="translate(430 470)">
     <rect width="308" height="118" fill="url(#glass)" stroke="#617485"/>
     <text x="28" y="42" fill="#c4d0d8" font-size="18" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">STATE ENGINE</text>
     <text x="28" y="86" fill="#f5f2ea" font-size="42" font-weight="700" font-family="Arial, Helvetica, sans-serif">Route Rank</text>
-    <text x="28" y="108" fill="#c4d0d8" font-size="18" font-family="Arial, Helvetica, sans-serif">Idle time, airport proximity, availability score</text>
+    <text x="28" y="108" fill="#c4d0d8" font-size="14" font-family="Arial, Helvetica, sans-serif">Idle time, proximity, availability</text>
   </g>
   <g transform="translate(772 470)">
     <rect width="308" height="118" fill="url(#glass)" stroke="#617485"/>
     <text x="28" y="42" fill="#c4d0d8" font-size="18" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">SURFACES</text>
     <text x="28" y="86" fill="#f5f2ea" font-size="42" font-weight="700" font-family="Arial, Helvetica, sans-serif">Ops UI</text>
-    <text x="28" y="108" fill="#c4d0d8" font-size="18" font-family="Arial, Helvetica, sans-serif">Overview, map, aircraft detail, JSON API</text>
+    <text x="28" y="108" fill="#c4d0d8" font-size="14" font-family="Arial, Helvetica, sans-serif">Overview, map, detail, JSON API</text>
   </g>
 </svg>
