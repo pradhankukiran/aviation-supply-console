@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 520" role="img" aria-label="Aviation Supply Console pipeline">
+  <defs>
+    <linearGradient id="stage" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#15222c"/>
+      <stop offset="100%" stop-color="#223241"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="520" fill="#0f1720"/>
+  <text x="80" y="76" fill="#f5f2ea" font-size="42" font-weight="700" font-family="Arial, Helvetica, sans-serif">System Flow</text>
+  <text x="80" y="112" fill="#aebdc7" font-size="22" font-family="Arial, Helvetica, sans-serif">From live state vectors to charter-facing supply intelligence</text>
+  <g transform="translate(80 170)">
+    <rect width="250" height="200" fill="url(#stage)" stroke="#5a6e7f"/>
+    <text x="28" y="44" fill="#c9652d" font-size="18" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">INPUTS</text>
+    <text x="28" y="90" fill="#f5f2ea" font-size="34" font-weight="700" font-family="Arial, Helvetica, sans-serif">OpenSky Live</text>
+    <text x="28" y="124" fill="#d3dde4" font-size="22" font-family="Arial, Helvetica, sans-serif">State vectors</text>
+    <text x="28" y="158" fill="#d3dde4" font-size="22" font-family="Arial, Helvetica, sans-serif">ADS-B archive backfill</text>
+    <text x="28" y="192" fill="#d3dde4" font-size="22" font-family="Arial, Helvetica, sans-serif">Registry enrichment</text>
+  </g>
+  <g transform="translate(402 250)">
+    <path d="M0 10h120" stroke="#c9652d" stroke-width="6"/>
+    <path d="M96 -8 120 10 96 28" fill="none" stroke="#c9652d" stroke-width="6"/>
+  </g>
+  <g transform="translate(548 170)">
+    <rect width="286" height="200" fill="url(#stage)" stroke="#5a6e7f"/>
+    <text x="28" y="44" fill="#c9652d" font-size="18" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">INGESTION</text>
+    <text x="28" y="90" fill="#f5f2ea" font-size="34" font-weight="700" font-family="Arial, Helvetica, sans-serif">Normalize + Store</text>
+    <text x="28" y="124" fill="#d3dde4" font-size="22" font-family="Arial, Helvetica, sans-serif">Hex, callsign, type, altitude</text>
+    <text x="28" y="158" fill="#d3dde4" font-size="22" font-family="Arial, Helvetica, sans-serif">Raw JSON persistence</text>
+    <text x="28" y="192" fill="#d3dde4" font-size="22" font-family="Arial, Helvetica, sans-serif">Event rows per snapshot</text>
+  </g>
+  <g transform="translate(878 250)">
+    <path d="M0 10h120" stroke="#c9652d" stroke-width="6"/>
+    <path d="M96 -8 120 10 96 28" fill="none" stroke="#c9652d" stroke-width="6"/>
+  </g>
+  <g transform="translate(1024 170)">
+    <rect width="296" height="200" fill="url(#stage)" stroke="#5a6e7f"/>
+    <text x="28" y="44" fill="#c9652d" font-size="18" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">STATE ENGINE</text>
+    <text x="28" y="90" fill="#f5f2ea" font-size="34" font-weight="700" font-family="Arial, Helvetica, sans-serif">Current Supply View</text>
+    <text x="28" y="124" fill="#d3dde4" font-size="22" font-family="Arial, Helvetica, sans-serif">Idle minutes and last airport</text>
+    <text x="28" y="158" fill="#d3dde4" font-size="22" font-family="Arial, Helvetica, sans-serif">Airport supply snapshots</text>
+    <text x="28" y="192" fill="#d3dde4" font-size="22" font-family="Arial, Helvetica, sans-serif">Route candidate ranking</text>
+  </g>
+  <g transform="translate(80 426)">
+    <text x="0" y="0" fill="#94a4af" font-size="20" font-family="Arial, Helvetica, sans-serif">Outputs: FastAPI JSON API, overview dashboard, ops map, aircraft detail pages.</text>
+  </g>
+</svg>

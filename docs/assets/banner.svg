@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" role="img" aria-label="Aviation Supply Console banner">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0d141b"/>
+      <stop offset="55%" stop-color="#13202a"/>
+      <stop offset="100%" stop-color="#223140"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#c9652d"/>
+      <stop offset="100%" stop-color="#f1a15d"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="720" fill="url(#bg)"/>
+  <g opacity="0.35">
+    <path d="M0 620h1600" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M0 500h1600" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M0 380h1600" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M0 260h1600" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M0 140h1600" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M180 0v720" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M420 0v720" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M660 0v720" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M900 0v720" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M1140 0v720" stroke="#4a5d6d" stroke-width="2"/>
+    <path d="M1380 0v720" stroke="#4a5d6d" stroke-width="2"/>
+  </g>
+  <path d="M78 586c200-68 364-154 489-328 65-90 141-168 218-218 110-74 224-117 385-151" fill="none" stroke="url(#accent)" stroke-width="18"/>
+  <circle cx="1298" cy="154" r="13" fill="#f1a15d"/>
+  <g transform="translate(1080 120)">
+    <path
+      fill="#f5f2ea"
+      d="M324 23 189 93 131 82 106 101 156 128 123 150 87 146 73 166 118 188 124 246 144 255 171 197 314 269 344 238 238 157 324 55Z"
+    />
+  </g>
+  <g transform="translate(88 106)">
+    <text x="0" y="0" fill="#c9652d" font-size="28" font-family="Arial, Helvetica, sans-serif" letter-spacing="6">PRIVATE AVIATION SUPPLY INTELLIGENCE</text>
+    <text x="0" y="110" fill="#f5f2ea" font-size="90" font-weight="700" font-family="Arial, Helvetica, sans-serif">Aviation Supply</text>
+    <text x="0" y="214" fill="#f5f2ea" font-size="90" font-weight="700" font-family="Arial, Helvetica, sans-serif">Console</text>
+    <text x="0" y="292" fill="#bcc9d3" font-size="34" font-family="Arial, Helvetica, sans-serif">FastAPI ops workspace for live OpenSky ingestion, route matching,</text>
+    <text x="0" y="338" fill="#bcc9d3" font-size="34" font-family="Arial, Helvetica, sans-serif">airport supply intelligence, and charter-relevant aircraft state.</text>
+  </g>
+  <g transform="translate(88 470)">
+    <rect width="308" height="118" fill="url(#glass)" stroke="#617485"/>
+    <text x="28" y="42" fill="#c4d0d8" font-size="18" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">LIVE COLLECTOR</text>
+    <text x="28" y="86" fill="#f5f2ea" font-size="42" font-weight="700" font-family="Arial, Helvetica, sans-serif">OpenSky</text>
+    <text x="28" y="108" fill="#c4d0d8" font-size="18" font-family="Arial, Helvetica, sans-serif">Anonymous or OAuth2 client credentials</text>
+  </g>
+  <g transform="translate(430 470)">
+    <rect width="308" height="118" fill="url(#glass)" stroke="#617485"/>
+    <text x="28" y="42" fill="#c4d0d8" font-size="18" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">STATE ENGINE</text>
+    <text x="28" y="86" fill="#f5f2ea" font-size="42" font-weight="700" font-family="Arial, Helvetica, sans-serif">Route Rank</text>
+    <text x="28" y="108" fill="#c4d0d8" font-size="18" font-family="Arial, Helvetica, sans-serif">Idle time, airport proximity, availability score</text>
+  </g>
+  <g transform="translate(772 470)">
+    <rect width="308" height="118" fill="url(#glass)" stroke="#617485"/>
+    <text x="28" y="42" fill="#c4d0d8" font-size="18" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">SURFACES</text>
+    <text x="28" y="86" fill="#f5f2ea" font-size="42" font-weight="700" font-family="Arial, Helvetica, sans-serif">Ops UI</text>
+    <text x="28" y="108" fill="#c4d0d8" font-size="18" font-family="Arial, Helvetica, sans-serif">Overview, map, aircraft detail, JSON API</text>
+  </g>
+</svg>

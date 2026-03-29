@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Aviation Supply Console logo">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0f1720"/>
+      <stop offset="100%" stop-color="#1d2b36"/>
+    </linearGradient>
+    <linearGradient id="trail" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#c9652d" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#c9652d"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="240" fill="url(#sky)"/>
+  <path d="M24 171h192" stroke="#314453" stroke-width="2"/>
+  <path d="M24 139h192" stroke="#314453" stroke-width="2"/>
+  <path d="M24 107h192" stroke="#314453" stroke-width="2"/>
+  <path d="M24 75h192" stroke="#314453" stroke-width="2"/>
+  <path d="M56 24v192" stroke="#314453" stroke-width="2"/>
+  <path d="M104 24v192" stroke="#314453" stroke-width="2"/>
+  <path d="M152 24v192" stroke="#314453" stroke-width="2"/>
+  <path d="M200 24v192" stroke="#314453" stroke-width="2"/>
+  <path d="M38 168c41-10 74-34 99-70 16-24 31-42 61-58" fill="none" stroke="url(#trail)" stroke-width="10"/>
+  <path
+    fill="#f4efe6"
+    d="M187 47 125 79 98 74 86 83 109 95 94 105 77 103 71 112 91 122 94 149 104 154 116 127 182 161 195 147 145 110 187 62Z"
+  />
+  <circle cx="186" cy="48" r="7" fill="#c9652d"/>
+</svg>

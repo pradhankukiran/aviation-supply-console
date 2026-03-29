@@ -7,4 +7,15 @@ __pycache__/
 data/
 *.sqlite3
 *.db
-
+.env
+.env.*
+!.env.example
+.coverage
+coverage.xml
+htmlcov/
+build/
+dist/
+*.egg-info/
+.DS_Store
+.idea/
+.vscode/
