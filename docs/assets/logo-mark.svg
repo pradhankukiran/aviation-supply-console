@@ -19,9 +19,18 @@
   <path d="M152 24v192" stroke="#314453" stroke-width="2"/>
   <path d="M200 24v192" stroke="#314453" stroke-width="2"/>
   <path d="M38 168c41-10 74-34 99-70 16-24 31-42 61-58" fill="none" stroke="url(#trail)" stroke-width="10"/>
-  <path
-    fill="#f4efe6"
-    d="M187 47 125 79 98 74 86 83 109 95 94 105 77 103 71 112 91 122 94 149 104 154 116 127 182 161 195 147 145 110 187 62Z"
-  />
+  <g transform="translate(68 22) scale(2.45)">
+    <path
+      fill="#f4efe6"
+      stroke="#0f1720"
+      stroke-width="1.1"
+      d="M32 5C36 8 38 16 38 24V40L44 49V53L35 48L33 58H31L29 48L20 53V49L26 40V24C26 16 28 8 32 5Z"
+    />
+    <path fill="#f4efe6" stroke="#0f1720" stroke-width="1.1" d="M26 22 8 27V31L26 30Z"/>
+    <path fill="#f4efe6" stroke="#0f1720" stroke-width="1.1" d="M38 22 56 27V31L38 30Z"/>
+    <path fill="#f4efe6" stroke="#0f1720" stroke-width="1.1" d="M26 40 14 46V49L26 46Z"/>
+    <path fill="#f4efe6" stroke="#0f1720" stroke-width="1.1" d="M38 40 50 46V49L38 46Z"/>
+    <circle cx="32" cy="11" r="2.2" fill="#c9652d"/>
+  </g>
   <circle cx="186" cy="48" r="7" fill="#c9652d"/>
 </svg>
