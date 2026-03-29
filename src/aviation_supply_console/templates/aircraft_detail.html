@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aircraft Detail</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/app.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">Aircraft state drill-down</p>
+          <h1 id="aircraft-title">Aircraft {{ hex_code }}</h1>
+          <p id="aircraft-subtitle" class="lede">Loading aircraft detail...</p>
+        </div>
+        <nav class="topnav">
+          <a class="navlink" href="/">Overview</a>
+          <a class="navlink" href="/map">Ops Map</a>
+          <a class="navlink active" href="/aircraft/{{ hex_code }}">Aircraft</a>
+        </nav>
+      </header>
+
+      <section class="layout">
+        <section class="panel">
+          <h2>Current State</h2>
+          <div id="state-grid" class="summary-grid"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Master Data</h2>
+          <div id="master-grid" class="summary-grid"></div>
+        </section>
+      </section>
+
+      <section class="layout detail-layout">
+        <section class="panel">
+          <h2>Recent Track</h2>
+          <svg id="track-plot" class="track-surface" viewBox="0 0 760 380"></svg>
+        </section>
+
+        <section class="panel">
+          <h2>Recent Airports</h2>
+          <div id="airport-history" class="list"></div>
+        </section>
+      </section>
+
+      <section class="panel">
+        <h2>Recent Position Samples</h2>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Airport</th>
+                <th>Altitude</th>
+                <th>Ground Speed</th>
+                <th>Track</th>
+              </tr>
+            </thead>
+            <tbody id="history-table"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const hexCode = "{{ hex_code }}";
+      const title = document.getElementById("aircraft-title");
+      const subtitle = document.getElementById("aircraft-subtitle");
+      const stateGrid = document.getElementById("state-grid");
+      const masterGrid = document.getElementById("master-grid");
+      const airportHistory = document.getElementById("airport-history");
+      const historyTable = document.getElementById("history-table");
+      const trackPlot = document.getElementById("track-plot");
+
+      function metric(label, value) {
+        return `<article class="card"><p>${label}</p><strong>${value ?? "n/a"}</strong></article>`;
+      }
+
+      function renderTrack(points) {
+        if (!points.length) {
+          trackPlot.innerHTML = `<text x="24" y="40" class="map-grid-label">No track samples available.</text>`;
+          return;
+        }
+        const valid = points.filter((item) => item.lat !== null && item.lon !== null);
+        if (!valid.length) {
+          trackPlot.innerHTML = `<text x="24" y="40" class="map-grid-label">No position coordinates available.</text>`;
+          return;
+        }
+        const lats = valid.map((item) => item.lat);
+        const lons = valid.map((item) => item.lon);
+        const minLat = Math.min(...lats) - 0.1;
+        const maxLat = Math.max(...lats) + 0.1;
+        const minLon = Math.min(...lons) - 0.1;
+        const maxLon = Math.max(...lons) + 0.1;
+        const width = 760;
+        const height = 380;
+
+        function project(lat, lon) {
+          const x = ((lon - minLon) / Math.max(0.1, maxLon - minLon)) * (width - 60) + 30;
+          const y = (1 - (lat - minLat) / Math.max(0.1, maxLat - minLat)) * (height - 60) + 30;
+          return { x, y };
+        }
+
+        const polyline = valid.map((item) => {
+          const point = project(item.lat, item.lon);
+          return `${point.x},${point.y}`;
+        }).join(" ");
+
+        const markers = valid.map((item, index) => {
+          const point = project(item.lat, item.lon);
+          return `<circle cx="${point.x}" cy="${point.y}" r="${index === valid.length - 1 ? 6 : 4}" class="track-point"></circle>`;
+        }).join("");
+
+        trackPlot.innerHTML = `
+          <rect x="1" y="1" width="${width - 2}" height="${height - 2}" class="track-frame"></rect>
+          <polyline points="${polyline}" class="track-line"></polyline>
+          ${markers}
+        `;
+      }
+
+      async function loadAircraftDetail() {
+        const response = await fetch(`/api/aircraft/${hexCode}/history`);
+        if (!response.ok) {
+          subtitle.textContent = "Aircraft detail is unavailable.";
+          return;
+        }
+        const data = await response.json();
+        const current = data.current;
+
+        title.textContent = current.reg ? `${current.reg} · ${current.hex}` : `Aircraft ${current.hex}`;
+        subtitle.textContent = `${current.aircraft_class ?? "unclassified"} • ${current.icaotype ?? "n/a"} • ${current.nearest_airport_icao ?? "no airport match"}`;
+
+        stateGrid.innerHTML = [
+          metric("Availability Score", current.availability_score),
+          metric("Band", current.availability_band),
+          metric("Nearest Airport", current.nearest_airport_icao),
+          metric("Last Airport", current.last_airport_icao),
+          metric("Idle Minutes", current.idle_minutes),
+          metric("Activity 24h", current.activity_24h),
+          metric("Activity 72h", current.activity_72h),
+          metric("Ground Speed", current.ground_speed),
+        ].join("");
+
+        masterGrid.innerHTML = [
+          metric("Manufacturer", data.master.manufacturer),
+          metric("Model", data.master.model),
+          metric("Operator", data.master.owner_operator),
+          metric("Last Seen", current.snapshot_ts),
+        ].join("");
+
+        if (data.recent_airports.length) {
+          airportHistory.innerHTML = data.recent_airports.map((item) => `
+            <article class="row">
+              <div>
+                <strong>${item.airport_icao}</strong>
+                <p>${item.sample_count} recent samples</p>
+              </div>
+              <div class="score-block">
+                <span class="pill neutral">${item.last_seen_at.slice(11, 16)}</span>
+              </div>
+            </article>
+          `).join("");
+        } else {
+          airportHistory.innerHTML = `<p class="empty">No recent airport associations available.</p>`;
+        }
+
+        historyTable.innerHTML = data.recent_positions.map((item) => `
+          <tr>
+            <td>${item.snapshot_ts}</td>
+            <td>${item.nearest_airport_icao ?? "n/a"}</td>
+            <td>${item.altitude_is_ground ? "ground" : (item.altitude_baro ?? "n/a")}</td>
+            <td>${item.ground_speed ?? "n/a"}</td>
+            <td>${item.track ?? "n/a"}</td>
+          </tr>
+        `).join("");
+
+        renderTrack(data.recent_positions);
+      }
+
+      loadAircraftDetail();
+    </script>
+  </body>
+</html>

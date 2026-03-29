@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ops Map</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/app.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">Auto-refreshing aircraft view</p>
+          <h1>Ops Map</h1>
+          <p class="lede">
+            Latest charter-relevant positions from the imported state table. Click an aircraft to open the detail page.
+          </p>
+        </div>
+        <nav class="topnav">
+          <a class="navlink" href="/">Overview</a>
+          <a class="navlink active" href="/map">Ops Map</a>
+        </nav>
+      </header>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Map Controls</h2>
+            <p class="subtle">Auto refreshes every 30 seconds.</p>
+          </div>
+          <div class="actions">
+            <button id="map-refresh" type="button">Refresh</button>
+          </div>
+        </div>
+        <form id="class-filter" class="filter-grid">
+          <label><input type="checkbox" value="light_jet" checked> Light Jet</label>
+          <label><input type="checkbox" value="midsize_jet" checked> Midsize Jet</label>
+          <label><input type="checkbox" value="heavy_jet" checked> Heavy Jet</label>
+          <label><input type="checkbox" value="turboprop" checked> Turboprop</label>
+          <label><input type="checkbox" value="rotorcraft" checked> Rotorcraft</label>
+        </form>
+      </section>
+
+      <section class="layout map-layout">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Aircraft Layer</h2>
+              <p id="map-status" class="subtle">Loading map data...</p>
+            </div>
+          </div>
+          <svg id="ops-map" class="map-surface" viewBox="0 0 1080 620" aria-label="Aircraft map"></svg>
+        </section>
+
+        <section class="panel">
+          <h2>Selection</h2>
+          <div id="selection-card" class="selection-card">
+            <p class="empty">Select an aircraft marker to inspect its current state.</p>
+          </div>
+          <div class="legend">
+            <div><span class="legend-chip jet-light"></span> Light Jet</div>
+            <div><span class="legend-chip jet-mid"></span> Midsize Jet</div>
+            <div><span class="legend-chip jet-heavy"></span> Heavy Jet</div>
+            <div><span class="legend-chip jet-tprop"></span> Turboprop</div>
+            <div><span class="legend-chip jet-rotor"></span> Rotorcraft</div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const svg = document.getElementById("ops-map");
+      const statusLine = document.getElementById("map-status");
+      const selectionCard = document.getElementById("selection-card");
+      const filterForm = document.getElementById("class-filter");
+      const refreshButton = document.getElementById("map-refresh");
+
+      const bounds = { minLon: -170, maxLon: -50, minLat: 10, maxLat: 75, width: 1080, height: 620 };
+      const colors = {
+        light_jet: "#2d6a4f",
+        midsize_jet: "#245c93",
+        heavy_jet: "#7f3b08",
+        turboprop: "#8a6d1f",
+        rotorcraft: "#8b1e3f",
+      };
+
+      function project(lat, lon) {
+        const x = ((lon - bounds.minLon) / (bounds.maxLon - bounds.minLon)) * bounds.width;
+        const y = (1 - (lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * bounds.height;
+        return { x, y };
+      }
+
+      function checkedClasses() {
+        return [...filterForm.querySelectorAll("input:checked")].map((node) => node.value);
+      }
+
+      function drawGrid() {
+        const parts = [];
+        for (let lon = -160; lon <= -60; lon += 20) {
+          const { x } = project(20, lon);
+          parts.push(`<line x1="${x}" y1="0" x2="${x}" y2="${bounds.height}" class="map-grid-line"></line>`);
+          parts.push(`<text x="${x + 6}" y="${bounds.height - 8}" class="map-grid-label">${lon}</text>`);
+        }
+        for (let lat = 20; lat <= 70; lat += 10) {
+          const { y } = project(lat, -160);
+          parts.push(`<line x1="0" y1="${y}" x2="${bounds.width}" y2="${y}" class="map-grid-line"></line>`);
+          parts.push(`<text x="8" y="${y - 6}" class="map-grid-label">${lat}</text>`);
+        }
+        return parts.join("");
+      }
+
+      function renderSelection(item) {
+        selectionCard.innerHTML = `
+          <div class="selection-body">
+            <strong>${item.reg ?? item.flight ?? item.hex}</strong>
+            <p>${item.aircraft_class} • ${item.icaotype ?? "n/a"}</p>
+            <p>${item.nearest_airport_icao ?? "n/a"} • score ${item.availability_score}</p>
+            <div class="actions">
+              <a class="button-link" href="/aircraft/${item.hex}">Open aircraft page</a>
+            </div>
+          </div>
+        `;
+      }
+
+      async function loadMap() {
+        const classes = checkedClasses().join(",");
+        const response = await fetch(`/api/map/aircraft?classes=${classes}&limit=350`);
+        const data = await response.json();
+        statusLine.textContent = `Snapshot ${data.snapshot_ts} • ${data.aircraft.length} aircraft • ${data.airports.length} airport anchors`;
+
+        const layers = [drawGrid()];
+
+        for (const airport of data.airports) {
+          const point = project(airport.lat, airport.lon);
+          layers.push(`
+            <g>
+              <rect x="${point.x - 4}" y="${point.y - 4}" width="8" height="8" class="map-airport"></rect>
+              <text x="${point.x + 8}" y="${point.y - 8}" class="map-airport-label">${airport.airport_icao}</text>
+            </g>
+          `);
+        }
+
+        for (const aircraft of data.aircraft) {
+          const point = project(aircraft.lat, aircraft.lon);
+          const fill = colors[aircraft.aircraft_class] ?? "#1f5f50";
+          layers.push(`
+            <a href="/aircraft/${aircraft.hex}">
+              <circle
+                cx="${point.x}"
+                cy="${point.y}"
+                r="5"
+                fill="${fill}"
+                stroke="#f7f2e8"
+                stroke-width="1.4"
+                data-hex="${aircraft.hex}"
+                data-payload='${JSON.stringify(aircraft).replace(/'/g, "&apos;")}'
+              ></circle>
+            </a>
+          `);
+        }
+
+        svg.innerHTML = layers.join("");
+
+        const first = data.aircraft[0];
+        if (first) {
+          renderSelection(first);
+        }
+
+        svg.querySelectorAll("circle[data-payload]").forEach((node) => {
+          node.addEventListener("mouseenter", () => {
+            const payload = JSON.parse(node.getAttribute("data-payload"));
+            renderSelection(payload);
+          });
+        });
+      }
+
+      filterForm.addEventListener("change", loadMap);
+      refreshButton.addEventListener("click", loadMap);
+      loadMap();
+      window.setInterval(loadMap, 30000);
+    </script>
+  </body>
+</html>

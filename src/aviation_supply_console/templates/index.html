@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aviation Supply Console</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/app.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">Private aviation supply intelligence</p>
+          <h1>Aviation Supply Console</h1>
+          <p class="lede">
+            Real-flight charter ops workspace with route matching, airport supply, aircraft drill-down,
+            and OpenSky-backed live collection.
+          </p>
+        </div>
+        <nav class="topnav">
+          <a class="navlink active" href="/">Overview</a>
+          <a class="navlink" href="/map">Ops Map</a>
+        </nav>
+      </header>
+
+      <section class="panel panel-accent">
+        <div class="panel-head">
+          <div>
+            <h2>System State</h2>
+            <p class="subtle">Latest snapshot status, collector readiness, and imported coverage.</p>
+          </div>
+          <div class="actions">
+            <a class="button-link" href="/map">Open map</a>
+            <button id="refresh-button" type="button">Refresh</button>
+          </div>
+        </div>
+        <div id="summary-grid" class="summary-grid"></div>
+      </section>
+
+      <section class="layout">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Top Charter Candidates</h2>
+              <p class="subtle">Strictly typed charter aircraft near recent activity.</p>
+            </div>
+          </div>
+          <div id="aircraft-list" class="list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Airport Supply Board</h2>
+              <p class="subtle">Latest airport-level supply snapshots from the current stored window.</p>
+            </div>
+          </div>
+          <div id="airport-list" class="list"></div>
+        </section>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Route Candidate Finder</h2>
+            <p class="subtle">Use IATA/LID or ICAO codes, then drill into a candidate aircraft.</p>
+          </div>
+        </div>
+        <form id="route-form" class="route-form">
+          <label>
+            <span>Origin</span>
+            <input name="origin" value="TEB" maxlength="4" required>
+          </label>
+          <label>
+            <span>Destination</span>
+            <input name="destination" value="OPF" maxlength="4" required>
+          </label>
+          <button type="submit">Rank aircraft</button>
+        </form>
+        <div id="route-results" class="list compact"></div>
+      </section>
+    </main>
+
+    <script>
+      const summaryGrid = document.getElementById("summary-grid");
+      const aircraftList = document.getElementById("aircraft-list");
+      const airportList = document.getElementById("airport-list");
+      const routeResults = document.getElementById("route-results");
+      const routeForm = document.getElementById("route-form");
+      const refreshButton = document.getElementById("refresh-button");
+
+      function summaryCard(label, value, detail = "") {
+        return `
+          <article class="card">
+            <p>${label}</p>
+            <strong>${value ?? "n/a"}</strong>
+            ${detail ? `<small>${detail}</small>` : ""}
+          </article>
+        `;
+      }
+
+      function renderList(container, rows, renderer) {
+        if (!rows.length) {
+          container.innerHTML = `<p class="empty">No data imported yet.</p>`;
+          return;
+        }
+        container.innerHTML = rows.map(renderer).join("");
+      }
+
+      function aircraftRow(item) {
+        return `
+          <a class="row-link" href="/aircraft/${item.hex}">
+            <article class="row">
+              <div>
+                <strong>${item.reg ?? item.flight ?? item.hex}</strong>
+                <p>${item.aircraft_class ?? "unclassified"} • ${item.icaotype ?? "n/a"} • ${item.nearest_airport_icao ?? "no airport match"}</p>
+              </div>
+              <div class="score-block">
+                <span class="pill ${item.availability_band}">${item.availability_score}</span>
+              </div>
+            </article>
+          </a>
+        `;
+      }
+
+      async function loadSummary() {
+        const response = await fetch("/api/ops/summary");
+        const data = await response.json();
+        const latestRun = data.latest_run ?? {};
+        const collector = data.collector_status ?? {};
+
+        summaryGrid.innerHTML = [
+          summaryCard("Latest Source", latestRun.source),
+          summaryCard("Run Status", latestRun.status),
+          summaryCard("Records Seen", latestRun.records_seen),
+          summaryCard("Records Written", latestRun.records_written),
+          summaryCard("Snapshot Time", data.latest_snapshot),
+          summaryCard(
+            "Collector",
+            collector.live_configured ? `${collector.live_provider} ready` : "Collector disabled",
+            collector.live_provider === "opensky"
+              ? `${collector.auth_mode} • ${collector.poll_interval_seconds}s poll`
+              : collector.live_configured
+                ? `Poll interval ${collector.poll_interval_seconds}s`
+                : "Set AVIATION_LIVE_PROVIDER and feed credentials to enable polling",
+          ),
+        ].join("");
+
+        renderList(aircraftList, data.top_aircraft ?? [], aircraftRow);
+
+        renderList(airportList, data.top_airports ?? [], (item) => `
+          <article class="row">
+            <div>
+              <strong>${item.airport_icao}</strong>
+              <p>${item.charter_relevant_count} charter aircraft • ${item.total_aircraft} total tracked</p>
+            </div>
+            <div class="score-block">
+              <span class="pill neutral">${item.top_aircraft_hexes.length}</span>
+            </div>
+          </article>
+        `);
+      }
+
+      async function loadRouteCandidates(origin, destination) {
+        routeResults.innerHTML = `<p class="empty">Loading candidates...</p>`;
+        const response = await fetch(`/api/routes/candidates?origin=${origin}&destination=${destination}`);
+        if (!response.ok) {
+          routeResults.innerHTML = `<p class="empty">No charter candidates for ${origin} → ${destination}</p>`;
+          return;
+        }
+        const rows = await response.json();
+        renderList(routeResults, rows, aircraftRow);
+      }
+
+      routeForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const formData = new FormData(routeForm);
+        loadRouteCandidates(
+          String(formData.get("origin")).toUpperCase(),
+          String(formData.get("destination")).toUpperCase(),
+        );
+      });
+
+      refreshButton.addEventListener("click", () => {
+        loadSummary();
+        const formData = new FormData(routeForm);
+        loadRouteCandidates(
+          String(formData.get("origin")).toUpperCase(),
+          String(formData.get("destination")).toUpperCase(),
+        );
+      });
+
+      loadSummary();
+      loadRouteCandidates("TEB", "OPF");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+[project]
+name = "aviation-supply-console"
+version = "0.1.0"
+description = "Internal aviation supply intelligence console built on real archive data and OpenSky live states."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "airportsdata>=20250909",
+  "fastapi>=0.116.0",
+  "httpx>=0.28.1",
+  "jinja2>=3.1.6",
+  "pydantic-settings>=2.11.0",
+  "sqlalchemy>=2.0.44",
+  "typer>=0.20.0",
+  "uvicorn[standard]>=0.37.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.4.2",
+  "ruff>=0.13.2",
+]
+
+[project.scripts]
+aviation-console = "aviation_supply_console.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aviation_supply_console"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
